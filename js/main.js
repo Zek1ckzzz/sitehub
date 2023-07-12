@@ -1,45 +1,45 @@
+const btnDarkMode = document.querySelector(".dark-mode-btn");
 
-$(document).ready(function(){
-	"use strict";
+// 1. Проверка темной темы на уровне системных настроек
+if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ) {
+    btnDarkMode.classList.add("dark-mode-btn--active");
+	document.body.classList.add("dark");
+}
 
-	var window_width 	 = $(window).width(),
-	window_height 		 = window.innerHeight,
-	header_height 		 = $(".default-header").height(),
-	header_height_static = $(".site-header.static").outerHeight(),
-	fitscreen 			 = window_height - header_height;
+// 2. Проверка темной темы в localStorage
+if (localStorage.getItem('darkMode') === 'dark') {
+    btnDarkMode.classList.add("dark-mode-btn--active");
+    document.body.classList.add("dark");
+} else if (localStorage.getItem("darkMode") === "light") {
+    btnDarkMode.classList.remove("dark-mode-btn--active");
+    document.body.classList.remove("dark");
+}
 
+// Если меняются системные настройки, меняем тему
+window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", (event) => {
+        const newColorScheme = event.matches ? "dark" : "light";
 
-	$(".fullscreen").css("height", window_height)
-	$(".fitscreen").css("height", fitscreen);
-
-     
-     // -------   Active Mobile Menu-----//
-
-    $(".menu-bar").on('click', function(e){
-        e.preventDefault();
-        $("nav").toggleClass('hide');
-        $("span", this).toggleClass("lnr-menu lnr-cross");
-        $(".main-menu").addClass('mobile-menu');
+        if (newColorScheme === "dark") {
+			btnDarkMode.classList.add("dark-mode-btn--active");
+			document.body.classList.add("dark");
+			localStorage.setItem("darkMode", "dark");
+		} else {
+			btnDarkMode.classList.remove("dark-mode-btn--active");
+			document.body.classList.remove("dark");
+			localStorage.setItem("darkMode", "light");
+		}
     });
-     
-    $('select').niceSelect();
-    $('.img-pop-up').magnificPopup({
-        type: 'image',
-        gallery:{
-        enabled:true
-        }
-    });
-    $('.play-btn').magnificPopup({
-        disableOn: 700,
-        type: 'iframe',
-        mainClass: 'mfp-fade',
-        removalDelay: 160,
-        preloader: false,
-        fixedContentPos: false
-    });
-    
-    $(document).ready(function() {
-        $('#mc_embed_signup').find('form').ajaxChimp();
-    });      
 
- });
+// Включение ночного режима по кнопке
+btnDarkMode.onclick = function () {
+    btnDarkMode.classList.toggle("dark-mode-btn--active");
+    const isDark = document.body.classList.toggle("dark");
+
+    if (isDark) {
+        localStorage.setItem("darkMode", "dark");
+    } else {
+        localStorage.setItem("darkMode", "light");
+    }
+};
